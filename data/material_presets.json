@@ -1,0 +1,8 @@
+{
+  "Custom": 0.0,
+  "Intrinsic Silicon": 0.0,
+  "N-type Silicon (Lightly Doped)": 0.2,
+  "N-type Silicon (Heavily Doped)": 0.4,
+  "P-type Silicon (Lightly Doped)": -0.2,
+  "P-type Silicon (Heavily Doped)": -0.4
+}
