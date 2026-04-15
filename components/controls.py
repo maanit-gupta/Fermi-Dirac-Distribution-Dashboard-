@@ -24,17 +24,15 @@ def on_slider_change():
             break
     st.session_state.material_preset_val = matched
 
-def render_controls():
+def render_controls(active_tab="Fermi-Dirac Distribution"):
     """
-    Renders sliders and dropdowns for the Fermi-Dirac Visualizer sidebar.
-    Returns:
-        tuple: Selection for (Temperature in K, Fermi Energy in eV)
+    Renders sliders and dropdowns for the Visualizer sidebar.
+    Returns depends on the active tab.
     """
     with st.sidebar:
         st.header("Controls Configuration")
         st.markdown("---")
         
-        # Initialize session state variables safely on first run
         if "ef_slider_val" not in st.session_state:
             st.session_state.ef_slider_val = 0.00
         if "material_preset_val" not in st.session_state:
@@ -42,33 +40,45 @@ def render_controls():
             
         preset_names = list(PRESETS.keys())
         
-        # Material Preset Selectbox linked to session state
-        st.selectbox(
-            "Material Preset",
-            options=preset_names,
-            key="material_preset_val",
-            on_change=on_preset_change
-        )
-        
-        # Temperature slider
-        T = st.slider(
-            "Temperature (K)",
-            min_value=0,
-            max_value=1000,
-            value=300,
-            step=1,
-            help="Adjust the absolute temperature of the system."
-        )
-        
-        # Fermi Energy slider linked to session state
-        E_F = st.slider(
-            "Fermi Energy (eV)",
-            min_value=-0.50,
-            max_value=0.50,
-            step=0.01,
-            key="ef_slider_val",
-            on_change=on_slider_change,
-            help="Adjust the core Energy Fermi Level relative to intrinsic state."
-        )
-        
-    return T, E_F
+        if active_tab == "Fermi-Dirac Distribution":
+            with st.expander("Advanced Material Presets", expanded=True):
+                st.radio(
+                    "Select Preset",
+                    options=preset_names,
+                    key="material_preset_val",
+                    on_change=on_preset_change,
+                    label_visibility="collapsed"
+                )
+            
+            T = st.slider(
+                "Temperature (K)",
+                min_value=0, max_value=1000, value=300, step=1,
+                help="Adjust the absolute temperature of the system."
+            )
+            
+            E_F = st.slider(
+                "Fermi Energy (eV)",
+                min_value=-0.50, max_value=0.50, step=0.01,
+                key="ef_slider_val", on_change=on_slider_change,
+                help="Adjust the core Energy Fermi Level relative to intrinsic state."
+            )
+            
+            return {"T": T, "E_F": E_F}
+        else:
+            na_exp = st.slider(
+                "Acceptor Doping N_A (10^x cm⁻³)",
+                min_value=14.0, max_value=18.0, value=16.0, step=0.1,
+                help="Logarithmic scale for P-type doping."
+            )
+            nd_exp = st.slider(
+                "Donor Doping N_D (10^x cm⁻³)",
+                min_value=14.0, max_value=18.0, value=16.0, step=0.1,
+                help="Logarithmic scale for N-type doping."
+            )
+            T = st.slider(
+                "Temperature (K)",
+                min_value=200, max_value=400, value=300, step=1,
+                help="Adjust the ambient thermal energy."
+            )
+            
+            return {"N_A": 10**na_exp, "N_D": 10**nd_exp, "T": T}
