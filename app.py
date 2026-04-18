@@ -127,16 +127,8 @@ def main():
         </style>
     """, unsafe_allow_html=True)
     
-    # Top-level navigation mimicking tabs
-    active_tab = st.radio(
-        "Select View",
-        ["Fermi-Dirac Distribution", "PN Junction Band Diagram"],
-        horizontal=True,
-        label_visibility="collapsed"
-    )
-
     # Render Controls from Sidebar
-    controls = render_controls(active_tab)
+    active_tab, controls = render_controls()
     
     with st.sidebar:
         if active_tab == "Fermi-Dirac Distribution":
@@ -160,8 +152,15 @@ def main():
         # Render the graph in 'massive' full-width container
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         
-        st.latex(r"f(E) = \frac{1}{1 + e^{\frac{E - E_F}{kT}}}")
-        st.caption("$f(E)$ is the probability of an electron occupying state $E$, $E_F$ is the Fermi energy, $k$ is the Boltzmann constant, and $T$ is the absolute temperature.")
+        st.info(r"""
+**Equation:**
+$$f(E) = \frac{1}{1 + e^{\frac{E - E_F}{kT}}}$$
+
+* $f(E)$ is the probability of an electron occupying state $E$
+* $E_F$ is the Fermi energy
+* $k$ is the Boltzmann constant
+* $T$ is the absolute temperature
+""")
         
     else:
         st.markdown("<h2 style='text-align: center; color: #333;'>PN Junction Band Diagram</h2>", unsafe_allow_html=True)
@@ -193,8 +192,12 @@ def main():
         fig = create_pn_figure(x_array, res)
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         
-        st.latex(r"V_{bi} = \frac{kT}{q} \ln\left(\frac{N_A N_D}{n_i^2}\right)")
-        st.caption("The P-type region (acceptors) is shown on the negative x-axis, and the N-type region (donors) on the positive x-axis. As doping increases, the built-in potential difference rises causing larger band bending in the depletion zone.")
+        st.info(r"""
+**Equation:**
+$$V_{bi} = \frac{kT}{q} \ln\left(\frac{N_A N_D}{n_i^2}\right)$$
+
+The P-type region (acceptors) is shown on the negative x-axis, and the N-type region (donors) on the positive x-axis. As doping increases, the built-in potential difference rises causing larger band bending in the depletion zone.
+""")
     
 if __name__ == "__main__":
     main()

@@ -24,12 +24,17 @@ def on_slider_change():
             break
     st.session_state.material_preset_val = matched
 
-def render_controls(active_tab="Fermi-Dirac Distribution"):
+def render_controls():
     """
     Renders sliders and dropdowns for the Visualizer sidebar.
-    Returns depends on the active tab.
+    Returns the active tab and its corresponding controls.
     """
     with st.sidebar:
+        active_tab = st.radio(
+            "Select View",
+            ["Fermi-Dirac Distribution", "PN Junction Band Diagram"]
+        )
+        
         st.header("Controls Configuration")
         st.markdown("---")
         
@@ -63,8 +68,9 @@ def render_controls(active_tab="Fermi-Dirac Distribution"):
                 help="Adjust the core Energy Fermi Level relative to intrinsic state."
             )
             
-            return {"T": T, "E_F": E_F}
+            return active_tab, {"T": T, "E_F": E_F}
         else:
+            st.markdown("---")
             na_exp = st.slider(
                 "Acceptor Doping N_A (10^x cm⁻³)",
                 min_value=14.0, max_value=18.0, value=16.0, step=0.1,
@@ -75,10 +81,11 @@ def render_controls(active_tab="Fermi-Dirac Distribution"):
                 min_value=14.0, max_value=18.0, value=16.0, step=0.1,
                 help="Logarithmic scale for N-type doping."
             )
+            st.markdown("---")
             T = st.slider(
                 "Temperature (K)",
                 min_value=200, max_value=400, value=300, step=1,
                 help="Adjust the ambient thermal energy."
             )
             
-            return {"N_A": 10**na_exp, "N_D": 10**nd_exp, "T": T}
+            return active_tab, {"N_A": 10**na_exp, "N_D": 10**nd_exp, "T": T}
